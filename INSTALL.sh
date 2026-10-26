@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$(readlink -f "$0")")"
-echo '◆ PHONETHORN v0.5.0 • MX Linux installer'
+echo '◆ PHONETHORN v0.5.0 • Debian-based Linux installer'
 if ! command -v python3 >/dev/null; then echo 'Python 3 required'; exit 1; fi
 if ! python3 -m venv .venv 2>/dev/null; then
   echo 'Install Python venv first: sudo apt install python3-venv'
