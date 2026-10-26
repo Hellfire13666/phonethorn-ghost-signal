@@ -1,37 +1,106 @@
-# PHONETHORN v0.5.0 // ANONYMISSGLITCH · COSMIC KITTIES 🐈‍⬛
+# PHONETHORN // GHOST SIGNAL 🐈‍⬛🌌
 
-Phone-number metadata, publicly documented business contacts, optional paid carrier line-type intelligence, local GEO analysis, and personal lost-device recovery. **No phone-number-to-live-GPS capability.**
+![PHONETHORN: Rosie and Cosmic Kitty](PHONETHORN-COVER.png)
 
-## Install once on MX Linux
+**AnonymissGlitch · Cosmic Kitties Edition · v0.5.0**  
+A special [GlitchByte Phantom Labs](https://github.com/Hellfire13666/glitchbyte-phantom-labs) toolkit for phone metadata, public contact references, GEO utilities, personal lost-device recovery, and evidence reports.
+
+> The cover above requires `PHONETHORN-COVER.png` at the repository root. If the picture does not appear, upload the PNG with that exact filename.
+
+## 🐾 One-paste install — MX Linux / Debian
+
+Copy this **whole block** into a terminal for a first-time installation:
 
 ```bash
-cd "$HOME/Downloads" && unzip -oq PHONETHORN-ANONYMISSGLITCH-COSMIC-KITTIES-v0.5.0-SOURCE.zip && cd phonethorn-ghost-signal && bash ./INSTALL.sh
+sudo apt update &&
+sudo apt install -y git python3 python3-venv &&
+git clone https://github.com/Hellfire13666/phonethorn-ghost-signal.git "$HOME/phonethorn-ghost-signal" &&
+bash "$HOME/phonethorn-ghost-signal/INSTALL.sh" &&
+"$HOME/.local/bin/phonethorn" --version &&
+"$HOME/.local/bin/phonethorn" --examples
 ```
 
-`~/.local/bin/phonethorn` is the launcher. `./RUN.sh` runs from the extracted folder even without installing.
-
-## Recipes
+**Already have a folder named `~/phonethorn-ghost-signal`?** Don't clone over it. For an existing clean Git clone, use:
 
 ```bash
-phonethorn --examples
-phonethorn --phone '+14155552671' --region US
-phonethorn --phone '+14155552671' --web-intel
-phonethorn --phone '+14155552671' --web-url https://example.org/contact
-phonethorn --phone '+14155552671' --fusion --out "$HOME/PhoneThornReports"
-phonethorn --phone '+14155552671' --carrier  # PAID when credentials configured
+cd "$HOME/phonethorn-ghost-signal" &&
+git pull --ff-only &&
+bash ./INSTALL.sh &&
+"$HOME/.local/bin/phonethorn" --examples
+```
+
+The installer creates a Python virtual environment, installs the published requirements, and adds `~/.local/bin/phonethorn`. Python dependencies require internet access. If `phonethorn` is not on your PATH, use `"$HOME/.local/bin/phonethorn"`.
+
+## 📱 Easy phone recipes
+
+```bash
+# Number metadata (illustrative number)
+phonethorn --phone "+14155552671" --region US
+
+# Generate public search links; does NOT automatically scrape results
+phonethorn --phone "+14155552671" --web-intel
+
+# Check a specified, public business-contact page
+phonethorn --phone "+14155552671" --web-url "https://example.org/contact"
+
+# Combine free evidence and save HTML, JSON and TXT reports
+phonethorn --phone "+14155552671" --fusion --out "$HOME/PhoneThornReports"
+```
+
+## 🌍 GEO recipes
+
+```bash
+# Approximate public IP geolocation (not a mobile phone's GPS)
 phonethorn --geo-ip 8.8.8.8 --live-geo
+
+# Map coordinates supplied by you
 phonethorn --coords 40.7128 -74.0060
-phonethorn --photo-gps "$HOME/Pictures/my-own-photo.jpg" # optional Pillow
-phonethorn --devices
-phonethorn --rescue android
+
+# Read GPS EXIF metadata from a photo you own; optional Pillow dependency
+phonethorn --photo-gps "$HOME/Pictures/my-own-photo.jpg"
 ```
 
-**Web Echo** produces manual Google/Bing search links, not scraped results. `--web-url` checks one user-specified public HTTPS business page for a matching textual mention; it does not crawl links, bypass access controls, or identify private individuals. `--fusion` combines evidence with transparency labels and does not incur a paid API call unless `--carrier` is explicitly given.
+## 🛟 Lost-phone recovery and device checks
 
-**Carrier Signal** uses Twilio Lookup v2 `line_type_intelligence`, which incurs provider charges. To enable for an authorized number, obtain API credentials and `export TWILIO_API_KEY=...` and `export TWILIO_API_SECRET=...` in your own shell. Do not put secrets in reports or repos. Never send credentials to ChatGPT. Without keys, module reports `not_configured`. Provider data may be incomplete and is not an exact location.
+```bash
+phonethorn --rescue android
+phonethorn --rescue iphone
+phonethorn --devices
+phonethorn --examples
+```
 
-**Evidence Vault** exports HTML, JSON and TXT, owner-only file permissions where supported. `--out` is required to save. Local reports may include phone numbers: handle as private data.
+## 📡 Optional carrier lookup
 
-Run tests: `python3 -m unittest discover -s tests -v`. Live network/provider tests are not included; install and validate them in your own MX Linux environment. Third-party provider rates, availability and terms can change.
+```bash
+# May incur Twilio API charges; requires your configured credentials
+phonethorn --phone "+14155552671" --carrier
+```
 
-Code MIT licensed. Original toolkit maintained independently; no unreviewed older Holmes code copied.
+The tool uses optional Twilio Lookup v2 line-type intelligence. Set your own `TWILIO_API_KEY` and `TWILIO_API_SECRET` privately. **Never commit keys, private phone reports, or secret environment files to GitHub.** The ordinary `--fusion` command does not invoke the paid carrier lookup on its own.
+
+## 🔎 What the modules mean
+
+| Module | What it actually provides |
+| --- | --- |
+| Phone Intel | Number formats, numbering region, validity, possible type and carrier hints |
+| Web Echo | Manual search-engine links for publicly indexed number references |
+| Business Page Intel | Matches number mentions on one user-selected public HTTPS page |
+| Carrier Signal | Optional paid line-type/carrier information where provider data is available |
+| GEO | Approximate IP geography, supplied coordinates, photo EXIF metadata |
+| Evidence Vault | Local HTML, JSON and TXT reports with source labels |
+| Recovery | Official recovery guidance for your own missing devices |
+
+A phone number alone **cannot provide live device GPS**. Public number reports can be inaccurate, out of date, or affected by number portability and spoofing. The tool is meant for your own numbers, authorized inquiries, and legitimately public business information, not private-account enumeration.
+
+## 🧪 Tests
+
+```bash
+cd "$HOME/phonethorn-ghost-signal"
+./RUN.sh --examples
+python3 -m unittest discover -s tests -v
+```
+
+Local automated tests have been performed on packaged versions, but this public repository install still needs a real MX Linux clean-install check. Live external providers were not verified in those offline tests.
+
+**Part of:** GlitchByte Phantom Labs · AnonymissGlitch · Cosmic Kitties  
+**License:** MIT, see [LICENSE](LICENSE).
