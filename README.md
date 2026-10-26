@@ -14,66 +14,67 @@ Copy this **whole block** into a terminal for a first-time installation:
 ```bash
 sudo apt update &&
 sudo apt install -y git python3 python3-venv &&
-git clone https://github.com/Hellfire13666/phonethorn-ghost-signal.git "$HOME/phonethorn-ghost-signal" &&
-bash "$HOME/phonethorn-ghost-signal/INSTALL.sh" &&
-"$HOME/.local/bin/phonethorn" --version &&
-"$HOME/.local/bin/phonethorn" --examples
+git clone https://github.com/Hellfire13666/phonethorn-ghost-signal.git &&
+cd phonethorn-ghost-signal &&
+bash ./INSTALL.sh &&
+./RUN.sh --version &&
+./RUN.sh --examples
 ```
 
-**Already have a folder named `~/phonethorn-ghost-signal`?** Don't clone over it. For an existing clean Git clone, use:
+**Already cloned this repository?** Don't clone over it. For an existing clean Git clone, use:
 
 ```bash
-cd "$HOME/phonethorn-ghost-signal" &&
+cd phonethorn-ghost-signal &&
 git pull --ff-only &&
 bash ./INSTALL.sh &&
-"$HOME/.local/bin/phonethorn" --examples
+./RUN.sh --examples
 ```
 
-The installer creates a Python virtual environment, installs the published requirements, and adds `~/.local/bin/phonethorn`. Python dependencies require internet access. If `phonethorn` is not on your PATH, use `"$HOME/.local/bin/phonethorn"`.
+The installer creates a Python virtual environment, installs the published requirements, and adds a user-local launcher. Python dependencies require internet access. Use `./RUN.sh` from the project directory for commands below.
 
 ## 📱 Easy phone recipes
 
 ```bash
 # Number metadata (illustrative number)
-phonethorn --phone "+14155552671" --region US
+./RUN.sh --phone "+14155552671" --region US
 
 # Generate public search links; does NOT automatically scrape results
-phonethorn --phone "+14155552671" --web-intel
+./RUN.sh --phone "+14155552671" --web-intel
 
 # Check a specified, public business-contact page
-phonethorn --phone "+14155552671" --web-url "https://example.org/contact"
+./RUN.sh --phone "+14155552671" --web-url "https://example.org/contact"
 
 # Combine free evidence and save HTML, JSON and TXT reports
-phonethorn --phone "+14155552671" --fusion --out "$HOME/PhoneThornReports"
+./RUN.sh --phone "+14155552671" --fusion --out ./PhoneThornReports
 ```
 
 ## 🌍 GEO recipes
 
 ```bash
 # Approximate public IP geolocation (not a mobile phone's GPS)
-phonethorn --geo-ip 8.8.8.8 --live-geo
+./RUN.sh --geo-ip 8.8.8.8 --live-geo
 
 # Map coordinates supplied by you
-phonethorn --coords 40.7128 -74.0060
+./RUN.sh --coords 40.7128 -74.0060
 
 # Read GPS EXIF metadata from a photo you own; optional Pillow dependency
-phonethorn --photo-gps "$HOME/Pictures/my-own-photo.jpg"
+./RUN.sh --photo-gps ./my-own-photo.jpg
 ```
 
 ## 🛟 Lost-phone recovery and device checks
 
 ```bash
-phonethorn --rescue android
-phonethorn --rescue iphone
-phonethorn --devices
-phonethorn --examples
+./RUN.sh --rescue android
+./RUN.sh --rescue iphone
+./RUN.sh --devices
+./RUN.sh --examples
 ```
 
 ## 📡 Optional carrier lookup
 
 ```bash
 # May incur Twilio API charges; requires your configured credentials
-phonethorn --phone "+14155552671" --carrier
+./RUN.sh --phone "+14155552671" --carrier
 ```
 
 The tool uses optional Twilio Lookup v2 line-type intelligence. Set your own `TWILIO_API_KEY` and `TWILIO_API_SECRET` privately. **Never commit keys, private phone reports, or secret environment files to GitHub.** The ordinary `--fusion` command does not invoke the paid carrier lookup on its own.
