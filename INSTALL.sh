@@ -7,7 +7,7 @@ if ! python3 -m venv .venv 2>/dev/null; then
   echo 'Install Python venv first: sudo apt install python3-venv'
   exit 1
 fi
-.venv/bin/python -m pip install --disable-pip-version-check -r requirements.txt
+.venv/bin/python -m pip install --disable-pip-version-check --quiet -r requirements.txt
 mkdir -p "$HOME/.local/bin" "$HOME/.local/share/applications"
 cat > "$HOME/.local/bin/phonethorn" <<EOR
 #!/usr/bin/env bash
@@ -24,5 +24,6 @@ Exec=$HOME/.local/bin/phonethorn --rescue android
 Terminal=true
 Categories=Utility;System;
 EOR
-printf '\n✓ Installed. Try: %s/.local/bin/phonethorn --rescue android\n' "$HOME"
-echo 'Add ~/.local/bin to PATH or open a new terminal if needed.'
+printf '\n✓ PHONETHORN installed successfully.\n'
+echo 'Run from the project folder: ./RUN.sh --examples'
+echo 'Or use the launcher: phonethorn --rescue android (when available in PATH)'
