@@ -96,7 +96,7 @@ A phone number alone **cannot provide live device GPS**. Public number reports c
 ## 🧪 Tests
 
 ```bash
-cd "$HOME/phonethorn-ghost-signal"
+cd phonethorn-ghost-signal
 ./RUN.sh --examples
 python3 -m unittest discover -s tests -v
 ```
