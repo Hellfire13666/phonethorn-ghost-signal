@@ -7,7 +7,7 @@ A special [GlitchByte Phantom Labs](https://github.com/Hellfire13666/glitchbyte-
 
 > The cover above requires `PHONETHORN-COVER.png` at the repository root. If the picture does not appear, upload the PNG with that exact filename.
 
-## 🐾 One-paste install — MX Linux / Debian
+## 🐾 One-paste install — Debian-based Linux
 
 Copy this **whole block** into a terminal for a first-time installation:
 
@@ -100,7 +100,7 @@ cd "$HOME/phonethorn-ghost-signal"
 python3 -m unittest discover -s tests -v
 ```
 
-Local automated tests have been performed on packaged versions, but this public repository install still needs a real MX Linux clean-install check. Live external providers were not verified in those offline tests.
+Local automated tests have been performed on packaged versions, but this public repository install still needs a real Debian-based Linux clean-install check. Live external providers were not verified in those offline tests.
 
 **Part of:** GlitchByte Phantom Labs · AnonymissGlitch · Cosmic Kitties  
 **License:** MIT, see [LICENSE](LICENSE).
