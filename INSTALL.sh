@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$(readlink -f "$0")")"
-echo '◆ PHONETHORN v0.5.0 • Debian-based Linux installer'
+echo '◆ PHONETHORN v0.6.3 • Debian-based Linux installer'
 if ! command -v python3 >/dev/null; then echo 'Python 3 required'; exit 1; fi
 if ! python3 -m venv .venv 2>/dev/null; then
   echo 'Install Python venv first: sudo apt install python3-venv'
   exit 1
 fi
-.venv/bin/python -m pip install --disable-pip-version-check --quiet -r requirements.txt
+.venv/bin/python -m pip install --disable-pip-version-check -r requirements.txt
 mkdir -p "$HOME/.local/bin" "$HOME/.local/share/applications"
 cat > "$HOME/.local/bin/phonethorn" <<EOR
 #!/usr/bin/env bash
@@ -24,6 +24,6 @@ Exec=$HOME/.local/bin/phonethorn --rescue android
 Terminal=true
 Categories=Utility;System;
 EOR
-printf '\n✓ PHONETHORN installed successfully.\n'
-echo 'Run from the project folder: ./RUN.sh --examples'
-echo 'Or use the launcher: phonethorn --rescue android (when available in PATH)'
+printf '\n✓ PHONETHORN installed for current user.\n'
+echo 'Run: ./RUN.sh --examples'
+echo 'Or: phonethorn --rescue android (when ~/.local/bin is in PATH)'

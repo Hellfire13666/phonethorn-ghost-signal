@@ -1,4 +1,4 @@
-"""PHONETHORN v0.5.0: provenance-first phone and public business intelligence."""
+"""PHONETHORN v0.6.3: provenance-first phone and public business intelligence."""
 import base64
 import datetime as dt
 import html
@@ -10,7 +10,7 @@ import socket
 from urllib.parse import quote, quote_plus, urlparse
 from urllib.request import Request, urlopen
 
-USER_AGENT = 'PHONETHORN/0.5.0 (single-page public business verification)'
+USER_AGENT = 'PHONETHORN/0.6.2 (single-page public business verification)'
 
 def number_variants(number, region='US'):
     """Canonical and presentation variants; no bulk candidate enumeration."""
@@ -30,15 +30,32 @@ def number_variants(number, region='US'):
     return list(dict.fromkeys(v.strip() for v in variants if v.strip()))[:7]
 
 def web_echo(number, region='US'):
+    """Diverse research links, not scraped results or confirmed number ownership."""
     variants = number_variants(number, region)
-    queries = [f'"{v}" (contact OR business)' for v in variants[:3]]
-    links = []
-    for q in queries:
-        links.append({'query': q,
-                      'google': 'https://www.google.com/search?q=' + quote_plus(q),
-                      'bing': 'https://www.bing.com/search?q=' + quote_plus(q)})
-    return {'variants': variants, 'public_business_searches': links, 'mode': 'manual search links only',
-            'note': 'Search results are not automatically collected. Verify matches at their source; identical numbers can be quoted, spoofed or recycled.'}
+    digits = re.sub(r'\D', '', number)
+    local = digits[-10:]
+    presentations = [*variants]
+    if len(local) == 10:
+        presentations += [f'{local[:3]}-{local[3:6]}-{local[6:]}',
+                          f'({local[:3]}) {local[3:6]}-{local[6:]}',
+                          f'{local[:3]}.{local[3:6]}.{local[6:]}']
+    presentations = list(dict.fromkeys(presentations))
+    searches = []
+    services = {
+        'Google': 'https://www.google.com/search?q=',
+        'Bing': 'https://www.bing.com/search?q=',
+        'Brave': 'https://search.brave.com/search?q=',
+        'DuckDuckGo': 'https://duckduckgo.com/?q=',
+    }
+    from urllib.parse import quote_plus
+    for display in presentations:
+        query = '"' + display + '"'
+        searches.append({'format': display, 'query': query,
+                         'engines': {label: prefix + quote_plus(query) for label,prefix in services.items()}})
+    return {'variants': presentations, 'public_business_searches': [{'query': row['query'], 'google': row['engines']['Google'], 'bing': row['engines']['Bing']} for row in searches], 'public_search_references': searches,
+            'reference_count': len(presentations)*len(services),
+            'mode': 'manual public search references (no result scraping)',
+            'note': 'A public mention is not verified ownership, carrier or location.'}
 
 def _public_https_host(url):
     parsed = urlparse(url)

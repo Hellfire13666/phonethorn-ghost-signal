@@ -7,7 +7,7 @@ class FusionTests(unittest.TestCase):
         self.assertIn('+14155552671', number_variants('+14155552671'))
     def test_search(self):
         r = web_echo('+14155552671')
-        self.assertEqual(r['mode'], 'manual search links only')
+        self.assertIn('no result scraping', r['mode'])
         self.assertGreaterEqual(len(r['public_business_searches']), 2)
     def test_no_credentials_no_network(self):
         with patch.dict('os.environ', {}, clear=True):
