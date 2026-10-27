@@ -5,10 +5,16 @@ Phone-number metadata, publicly documented business contacts, optional paid carr
 ## Install once on Debian-based Linux
 
 ```bash
-cd "$HOME/PHONETHORN-v0.6.3-DEBIAN-CORRECTION" && bash ./INSTALL.sh
+cd phonethorn-ghost-signal && bash ./INSTALL.sh
 ```
 
-`~/.local/bin/phonethorn` is the launcher. `./RUN.sh` runs from the extracted folder even without installing.
+`./RUN.sh` runs from the checked-out repository folder. Use `bash ./RUN.sh` in the recipes below; an installed `phonethorn` launcher may also be available.
+
+## Original artwork
+
+![Approved Cosmic Kitty cover](PHONETHORN-COVER.png)
+
+This image is the identity of the tool. The browser research board embeds the original PNG. It does not represent automatic access to phone records.
 
 ## Recipes
 
