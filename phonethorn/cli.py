@@ -215,9 +215,40 @@ EXAMPLES = """
   No live phone GPS from a telephone number.
 """
 
+
+def print_switch_menu():
+    """Human-readable switchboard; display only, never perform a lookup."""
+    print("""
+  ╔══════════════════════ PHONETHORN SWITCHBOARD ══════════════════════╗
+  ║  PHONE SIGNALS                                                     ║
+  ║    --phone NUMBER --region US         Number metadata              ║
+  ║    --phone NUMBER --web-intel         Public search links          ║
+  ║    --phone NUMBER --fusion            Evidence fusion              ║
+  ║    --phone NUMBER --web-url URL       Public business contact     ║
+  ║    --phone NUMBER --carrier           Optional paid provider      ║
+  ║  FIELD TOOLS                                                       ║
+  ║    --geo-ip IP [--live-geo]           Approximate IP location     ║
+  ║    --coords LAT LON                   Known coordinates map       ║
+  ║    --photo-gps PHOTO                  Own photo EXIF              ║
+  ║    --devices                          Local device inventory      ║
+  ║  RECOVERY & REPORTS                                                ║
+  ║    --rescue android|iphone            Official recovery steps     ║
+  ║    --out DIRECTORY                    Save HTML, JSON & TXT        ║
+  ║    --demo    --examples               Offline demo / recipes     ║
+  ║  LOOKS & CONTROLS                                                  ║
+  ║    --menu          --show-art          Menu / banner only          ║
+  ║    --banner kitty|ghost|signal        Choose ASCII mascot        ║
+  ║    --theme neon|ember|frost|mono      Choose color scheme        ║
+  ║    --no-banner    --color never       Quiet / plain output       ║
+  ╚════════════════════════════════════════════════════════════════════╝
+  TIP: ./RUN.sh --phone '+14155552671' --fusion --out ./PhoneThornReports
+  NOTE: Phone numbers never reveal live GPS. Use authorized data only.
+""")
+
 def main(argv=None):
     p = argparse.ArgumentParser(prog='phonethorn', description='Offline phone metadata, lost-device recovery and local diagnostics')
     p.add_argument('--demo', action='store_true', help='Run a safe offline synthetic demonstration')
+    p.add_argument('--menu', action='store_true', help='Display standalone command switchboard, without running lookups')
     p.add_argument('--examples', action='store_true', help='Show copy-ready beginner recipes')
     p.add_argument('--geo-ip', help='Analyze IP address without making network calls unless --live-geo is set')
     p.add_argument('--live-geo', action='store_true', help='Opt in to a third-party approximate public IP geolocation lookup')
@@ -246,6 +277,9 @@ def main(argv=None):
     if not args.no_banner:
         print_banner(args.banner, args.theme, args.color)
     if args.show_art:
+        return 0
+    if args.menu or not (argv if argv is not None else sys.argv[1:]):
+        print_switch_menu()
         return 0
     if args.examples:
         print(EXAMPLES)
