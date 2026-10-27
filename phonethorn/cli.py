@@ -12,10 +12,11 @@ import webbrowser
 from urllib.parse import quote_plus, quote, urlparse
 from urllib.request import Request, urlopen
 import ipaddress
-from .fusion import number_variants, web_echo, inspect_public_business_page, twilio_line_type, fusion_evidence
+from .board import board_html
 from .terminal_art import banner as print_banner
+from .fusion import number_variants, web_echo, inspect_public_business_page, twilio_line_type, fusion_evidence
 
-VERSION = '0.5.0'
+VERSION = '0.6.3'
 OFFICIAL = {
     'android': 'https://android.com/find',
     'iphone': 'https://www.icloud.com/find',
@@ -208,13 +209,12 @@ EXAMPLES = """
   phonethorn --coords 40.7128 -74.0060
   phonethorn --photo-gps ~/Pictures/my-own-photo.jpg
   phonethorn --phone '+14155552671' --public-links --out ~/PhoneThornReports
-  phonethorn --phone '+14155552671' --web-intel
+  phonethorn --phone '+14155552671' --web-intel --popup-results
   phonethorn --phone '+14155552671' --web-url https://example.org/contact
   phonethorn --phone '+14155552671' --carrier  # requires Twilio API keys, billed
   phonethorn --phone '+14155552671' --fusion --out ~/PhoneThornReports
   No live phone GPS from a telephone number.
 """
-
 
 def print_switch_menu():
     """Human-readable switchboard; display only, never perform a lookup."""
@@ -248,7 +248,7 @@ def print_switch_menu():
 def main(argv=None):
     p = argparse.ArgumentParser(prog='phonethorn', description='Offline phone metadata, lost-device recovery and local diagnostics')
     p.add_argument('--demo', action='store_true', help='Run a safe offline synthetic demonstration')
-    p.add_argument('--menu', action='store_true', help='Display standalone command switchboard, without running lookups')
+    p.add_argument('--menu', action='store_true')
     p.add_argument('--examples', action='store_true', help='Show copy-ready beginner recipes')
     p.add_argument('--geo-ip', help='Analyze IP address without making network calls unless --live-geo is set')
     p.add_argument('--live-geo', action='store_true', help='Opt in to a third-party approximate public IP geolocation lookup')
@@ -259,6 +259,7 @@ def main(argv=None):
     p.add_argument('--rescue', choices=['android','iphone'], help='Add official lost-device recovery checklist')
     p.add_argument('--open-find', choices=['android','iphone'], help='Open official device-find sign-in in your browser')
     p.add_argument('--devices', action='store_true', help='Read-only local lsusb and adb devices inventory')
+    p.add_argument('--popup-results', action='store_true', help='Open local full-art research board when saved')
     p.add_argument('--web-intel', action='store_true', help='Generate public business/contact search links; no automatic search harvesting')
     p.add_argument('--web-url', help='Opt-in: inspect one public HTTPS business contact page for number matches')
     p.add_argument('--carrier', action='store_true', help='Opt in to billable Twilio Lookup v2 line type intelligence using TWILIO_API_KEY and TWILIO_API_SECRET')
@@ -267,12 +268,19 @@ def main(argv=None):
     p.add_argument('--out', help='Save reports in directory')
     p.add_argument('--format', choices=['all','html','json','txt'], default='all')
     p.add_argument('--color', choices=['auto','always','never'], default='auto')
-    p.add_argument('--banner', choices=['kitty','ghost','signal'], default='kitty', help='Select original terminal ASCII artwork')
-    p.add_argument('--theme', choices=['neon','ember','frost','mono'], default='neon', help='Set terminal-art color palette')
-    p.add_argument('--no-banner', action='store_true', help='Suppress decorative terminal art')
-    p.add_argument('--show-art', action='store_true', help='Preview selected ASCII artwork and exit')
+    p.add_argument('--output', choices=['clean','verbose','quiet'], default='clean', help='Terminal output detail; saved reports remain complete')
+    p.add_argument('--verbose', action='store_true', help='Show full technical terminal details')
+    p.add_argument('--quiet', action='store_true', help='Show minimal status and saved-file counts')
+    p.add_argument('--banner', choices=['kitty','ghost','signal'], default='kitty')
+    p.add_argument('--theme', choices=['neon','ember','frost','mono'], default='neon')
+    p.add_argument('--no-banner', action='store_true')
+    p.add_argument('--show-art', action='store_true')
     p.add_argument('--version', action='version', version='PHONETHORN ' + VERSION)
     args = p.parse_args(argv)
+    if args.verbose and args.quiet:
+        p.error('--verbose and --quiet cannot be combined')
+    if args.verbose: args.output = 'verbose'
+    if args.quiet: args.output = 'quiet'
     colors = args.color == 'always' or (args.color == 'auto' and sys.stdout.isatty())
     if not args.no_banner:
         print_banner(args.banner, args.theme, args.color)
@@ -294,14 +302,14 @@ def main(argv=None):
         else:
             print(json.dumps(report, indent=2))
         return 0
-    if (args.web_intel or args.web_url or args.carrier or args.fusion) and not args.phone:
+    if (args.web_intel or args.web_url or args.carrier or args.fusion or args.popup_results) and not args.phone:
         p.error('--web-intel, --web-url, --carrier and --fusion require --phone')
     if not any([args.phone, args.rescue, args.open_find, args.devices, args.geo_ip, args.coords, args.photo_gps]):
         p.print_help()
         return 0
     try:
         report = make_report(args.phone, args.region.upper(), args.rescue or args.open_find, args.devices, args.public_links)
-        if args.phone and (args.web_intel or args.fusion or args.web_url):
+        if args.phone and (args.web_intel or args.fusion or args.web_url or args.popup_results):
             number = report.get('number_intelligence', {}).get('e164', args.phone)
             report['web_echo'] = web_echo(number, args.region.upper())
         if args.web_url:
@@ -323,25 +331,45 @@ def main(argv=None):
         return 2
     if args.phone and 'error' in report.get('number_intelligence', {}):
         print(paint('INVALID INPUT: ' + report['number_intelligence']['error'], 'yellow', colors))
-    for k,v in report.items():
-        if k == 'official_recovery_links' and not (args.rescue or args.open_find):
-            continue
-        if k in ('tool','version','generated_utc','offline_lookup','contact_or_live_location'):
-            continue
-        print(paint('\n◆ ' + k.upper(), 'cyan', colors))
-        if isinstance(v, dict):
-            for item, value in v.items():
-                print('  ' + paint(item, 'green', colors) + ': ' + str(value))
-        elif isinstance(v, list):
-            for item in v:
-                print('  • ' + item)
-        else:
-            print('  ' + str(v))
-    if args.out:
-        for f in save_report(report, args.out, args.format):
-            print(paint('SAVED ', 'green', colors) + f)
-    else:
-        print(paint('\nSAVE OFF • terminal only', 'yellow', colors))
+    if args.output == 'verbose':
+        for k,v in report.items():
+            if k == 'official_recovery_links' and not (args.rescue or args.open_find):
+                continue
+            if k in ('tool','version','generated_utc','offline_lookup','contact_or_live_location'):
+                continue
+            print(paint('\n◆ ' + k.upper(), 'cyan', colors))
+            print(json.dumps(v, ensure_ascii=False, indent=2))
+    elif args.output == 'clean':
+        from .presentation import print_clean
+        print_clean(report, colors, paint)
+    saved = []
+    if args.out or args.popup_results:
+        saved = save_report(report, args.out or './PhoneThornReports', args.format)
+        if args.popup_results:
+            directory = Path(args.out or './PhoneThornReports').expanduser().resolve()
+            directory.mkdir(parents=True, exist_ok=True, mode=0o700)
+            name = 'PHONETHORN-BOARD-' + dt.datetime.now(dt.timezone.utc).strftime('%Y%m%dT%H%M%S%f') + '.html'
+            target = directory / name
+            with target.open('x', encoding='utf-8') as fp:
+                os.chmod(target, 0o600)
+                fp.write(board_html(report))
+            saved.append(str(target))
+            import shutil as _shutil
+            if _shutil.which('xdg-open'):
+                subprocess.Popen(['xdg-open', str(target)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+    if args.output == 'verbose':
+        for filename in saved:
+            print(paint('SAVED ', 'green', colors) + Path(filename).name)
+    elif saved:
+        from collections import Counter
+        tally = Counter(Path(filename).suffix.lower() for filename in saved)
+        print(paint('\n◆ EVIDENCE VAULT', 'pink', colors))
+        print(paint('  [SAVED] HTML: {}  JSON: {}  TXT: {}'.format(tally['.html'],tally['.json'],tally['.txt']), 'green', colors))
+        if args.popup_results:
+            print(paint('  [OPEN] Cosmic Kitty HTML results board requested', 'cyan', colors))
+        print('  Reports saved in your selected local directory (full paths hidden).')
+    elif args.output == 'clean':
+        print(paint('\n◆ SAVE OFF • terminal results only', 'yellow', colors))
     if args.open_find:
         print('Opening official: ' + OFFICIAL[args.open_find])
         webbrowser.open(OFFICIAL[args.open_find])

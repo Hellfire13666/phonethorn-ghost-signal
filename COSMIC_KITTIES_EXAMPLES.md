@@ -1,11 +1,11 @@
-# PHONETHORN v0.5.0 // ANONYMISSGLITCH · COSMIC KITTIES 🐈‍⬛
+# PHONETHORN v0.6.3 // ANONYMISSGLITCH · COSMIC KITTIES 🐈‍⬛
 
 Phone-number metadata, publicly documented business contacts, optional paid carrier line-type intelligence, local GEO analysis, and personal lost-device recovery. **No phone-number-to-live-GPS capability.**
 
-## Install once on MX Linux
+## Install once on Debian-based Linux
 
 ```bash
-cd "$HOME/Downloads" && unzip -oq PHONETHORN-ANONYMISSGLITCH-COSMIC-KITTIES-v0.5.0-SOURCE.zip && cd phonethorn-ghost-signal && bash ./INSTALL.sh
+cd "$HOME/PHONETHORN-v0.6.3-DEBIAN-CORRECTION" && bash ./INSTALL.sh
 ```
 
 `~/.local/bin/phonethorn` is the launcher. `./RUN.sh` runs from the extracted folder even without installing.
@@ -32,6 +32,6 @@ phonethorn --rescue android
 
 **Evidence Vault** exports HTML, JSON and TXT, owner-only file permissions where supported. `--out` is required to save. Local reports may include phone numbers: handle as private data.
 
-Run tests: `python3 -m unittest discover -s tests -v`. Live network/provider tests are not included; install and validate them in your own MX Linux environment. Third-party provider rates, availability and terms can change.
+Run tests: `python3 -m unittest discover -s tests -v`. Live network/provider tests are not included; install and validate them in your own Debian-based Linux environment. Third-party provider rates, availability and terms can change.
 
 Code MIT licensed. Original toolkit maintained independently; no unreviewed older Holmes code copied.

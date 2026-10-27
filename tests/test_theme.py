@@ -10,4 +10,4 @@ class ThemeTest(unittest.TestCase):
  def test_coordinate(self):
   self.assertIn('openstreetmap.org',coordinate_geo(1,2)['map_url'])
  def test_version(self):
-  self.assertEqual(VERSION,'0.5.0')
+  self.assertEqual(VERSION,'0.6.3')
