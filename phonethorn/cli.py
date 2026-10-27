@@ -13,6 +13,7 @@ from urllib.parse import quote_plus, quote, urlparse
 from urllib.request import Request, urlopen
 import ipaddress
 from .fusion import number_variants, web_echo, inspect_public_business_page, twilio_line_type, fusion_evidence
+from .terminal_art import banner as print_banner
 
 VERSION = '0.5.0'
 OFFICIAL = {
@@ -235,12 +236,17 @@ def main(argv=None):
     p.add_argument('--out', help='Save reports in directory')
     p.add_argument('--format', choices=['all','html','json','txt'], default='all')
     p.add_argument('--color', choices=['auto','always','never'], default='auto')
+    p.add_argument('--banner', choices=['kitty','ghost','signal'], default='kitty', help='Select original terminal ASCII artwork')
+    p.add_argument('--theme', choices=['neon','ember','frost','mono'], default='neon', help='Set terminal-art color palette')
+    p.add_argument('--no-banner', action='store_true', help='Suppress decorative terminal art')
+    p.add_argument('--show-art', action='store_true', help='Preview selected ASCII artwork and exit')
     p.add_argument('--version', action='version', version='PHONETHORN ' + VERSION)
     args = p.parse_args(argv)
     colors = args.color == 'always' or (args.color == 'auto' and sys.stdout.isatty())
-    print(paint('✦  /\\_/\\   PHONETHORN // GHOST SIGNAL v0.5.0', 'pink', colors))
-    print(paint('  ( o.o )  COSMIC KITTIES • ANONYMISSGLITCH', 'cyan', colors))
-    print(paint('   > ^ <   GLITCHBYTE PHANTOM LABS  ✧', 'violet', colors))
+    if not args.no_banner:
+        print_banner(args.banner, args.theme, args.color)
+    if args.show_art:
+        return 0
     if args.examples:
         print(EXAMPLES)
         return 0
