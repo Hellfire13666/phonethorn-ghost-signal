@@ -1,5 +1,9 @@
 # PHONETHORN // GHOST SIGNAL v0.6.3
 
+<!-- GLITCHBYTE-VISITOR-BADGE:START -->
+[![Page Views](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FHellfire13666%2Fphonethorn-ghost-signal&count_bg=%23FF1493&title_bg=%23080808&icon=&icon_color=%23FFFFFF&title=PAGE+VIEWS&edge_flat=false)](https://github.com/Hellfire13666/phonethorn-ghost-signal)
+<!-- GLITCHBYTE-VISITOR-BADGE:END -->
+
 ![PHONETHORN Cosmic Kitty official cover](PHONETHORN-COVER.png)
 
 **COSMIC KITTIES · CLEAN SIGNAL · GLITCHBYTE PHANTOM LABS**
